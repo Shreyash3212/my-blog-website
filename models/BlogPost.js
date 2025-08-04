@@ -7,8 +7,8 @@ const BlogPostSchema = new mongoose.Schema({
   coverImage: String,
   category: String,
   tags: [String],
-  published: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  published: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 export default mongoose.models.BlogPost || mongoose.model('BlogPost', BlogPostSchema);

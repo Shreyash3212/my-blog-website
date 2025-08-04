@@ -20,17 +20,19 @@ export default function AdminNewPost() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const res = await fetch('/api/posts', {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        coverImage,
-        category,
-        tags: tags.split(",").map(tag => tag.trim()),
-        content
-      })
-    });
+const res = await fetch('/api/posts', {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    title,
+    coverImage,
+    category,
+    tags: tags.split(",").map(tag => tag.trim()),
+    content,
+    published: true   // <-- ADD THIS!
+  })
+});
+
 
     if (res.ok) {
       setMessage("New post created!");

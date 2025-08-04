@@ -19,9 +19,9 @@ export default async function handler(req, res) {
   }
   if (req.method === 'POST') {
     // For admin (auth check omitted for brevity)
-    const { title, content, coverImage, category, tags } = req.body;
-    const post = await BlogPost.create({ title, content, coverImage, category, tags });
-    return res.status(201).json(post);
+const { title, content, coverImage, category, tags, published } = req.body;
+const post = await BlogPost.create({ title, content, coverImage, category, tags, published });
+
   }
   res.status(405).end();
 }
