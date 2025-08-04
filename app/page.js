@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 export default async function Home() {
-const res = await fetch(`http://localhost:3000/api/posts?limit=5`, { cache: 'no-store' });
+const res = await fetch(`https://awsome-blog-website.netlify.app/api/posts?limit=5`, { cache: 'no-store' });
 
 if (!res.ok) {
   console.error('Failed to fetch posts:', res.status);
