@@ -1,6 +1,6 @@
 // pages/sitemap.xml.js
-import dbConnect from '../../lib/dbConnect';
-import BlogPost from '../../models/BlogPost';
+import dbConnect from '../lib/dbConnect';
+import BlogPost from '../models/BlogPost';
 
 export default async (req, res) => {
   await dbConnect();
