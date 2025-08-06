@@ -20,7 +20,9 @@ export default function AdminNewPost() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-const res = await fetch('/api/posts', {
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+
+const res = await fetch(`${baseUrl}/api/posts`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -29,9 +31,10 @@ const res = await fetch('/api/posts', {
     category,
     tags: tags.split(",").map(tag => tag.trim()),
     content,
-    published: true   // <-- ADD THIS!
-  })
+    published: true
+  }),
 });
+
 
 
     if (res.ok) {
