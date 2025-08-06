@@ -10,7 +10,6 @@ export default async function Home() {
   const res = await fetch(`${baseUrl}/api/posts`, { cache: "no-store" });
 
   if (!res.ok) {
-    // console.error("Failed to fetch posts:", res.status);
     return <div>Failed to load posts.</div>;
   }
 
