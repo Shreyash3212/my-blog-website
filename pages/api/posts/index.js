@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   await dbConnect();
 
   if (req.method === 'GET') {
+    // Filtering with query params
     const { tag, category, page = 1, limit = 5 } = req.query;
     const filter = {};
     if (tag) filter.tags = tag;
@@ -17,12 +18,14 @@ export default async function handler(req, res) {
       .limit(Number(limit));
 
     const total = await BlogPost.countDocuments(filter);
-    return res.json({ posts, total });
+    return res.status(200).json({ posts, total });
   }
 
   if (req.method === 'POST') {
     try {
+      // For admin (auth check omitted for brevity)
       const { title, content, coverImage, category, tags, published } = req.body;
+
       const post = await BlogPost.create({
         title,
         content,
@@ -31,12 +34,14 @@ export default async function handler(req, res) {
         tags,
         published,
       });
-      return res.status(201).json(post); // ✅ Return created post
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Failed to create post' });
+
+      return res.status(201).json({ message: 'Post created successfully', post });
+    } catch (error) {
+      console.error('Error creating post:', error);
+      return res.status(500).json({ message: 'Failed to create post' });
     }
   }
 
-  return res.status(405).json({ error: 'Method Not Allowed' });
+  // If not GET or POST
+  return res.status(405).json({ message: 'Method Not Allowed' });
 }
