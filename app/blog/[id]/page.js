@@ -8,11 +8,11 @@ export default async function BlogPost({ params }) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
       ? `${process.env.NEXT_PUBLIC_BASE_URL}` 
       : 'http://localhost:3000';
-      
+    console.log(baseUrl);
     const res = await fetch(`${baseUrl}/api/posts/${id}`, {
       cache: 'no-store' // Ensure fresh data
     });
-    
+    console.log(res);
     if (!res.ok) {
       throw new Error('Failed to fetch post');
     }

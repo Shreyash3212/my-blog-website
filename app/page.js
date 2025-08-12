@@ -6,9 +6,9 @@ export default async function Home() {
     process.env.NEXT_PUBLIC_BASE_URL
       ? `${process.env.NEXT_PUBLIC_BASE_URL}`
       : "http://localhost:3000";
-
+console.log(baseUrl);
   const res = await fetch(`${baseUrl}/api/posts`, { cache: "no-store" });
-
+console.log(res);
   if (!res.ok) {
     return <div>Failed to load posts.</div>;
   }
