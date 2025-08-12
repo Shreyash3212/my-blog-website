@@ -10,9 +10,14 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     async function fetchPosts() {
-      const res = await fetch("/api/posts");
-      const { posts } = await res.json();
-      setPosts(posts);
+      try {
+        // Fetch all posts (published and unpublished) for admin
+        const res = await fetch("/api/posts?limit=100");
+        const data = await res.json();
+        setPosts(data.posts || []);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
     }
     fetchPosts();
   }, []);
@@ -22,10 +27,10 @@ export default function AdminDashboard() {
     router.push("/admin/login");
   }
 
-      const loading = useRequireAuth();
+  const loading = useRequireAuth();
 
   if (loading) {
-    return <div>Loading...</div>; // Or a spinner, or nothing
+    return <div>Loading...</div>;
   }
 
   return (

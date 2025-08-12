@@ -1,4 +1,3 @@
-// /app/admin/new/page.js
 'use client';
 import { useState } from "react";
 import { useRequireAuth } from "@/app/components/userRequireAuth";
@@ -11,41 +10,43 @@ export default function AdminNewPost() {
   const [content, setContent] = useState("");
   const [message, setMessage] = useState("");
 
-    const loading = useRequireAuth();
+  const loading = useRequireAuth();
 
   if (loading) {
-    return <div>Loading...</div>; // Or a spinner, or nothing
+    return <div>Loading...</div>;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+    try {
+      const res = await fetch('/api/posts', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          coverImage,
+          category,
+          tags: tags.split(",").map(tag => tag.trim()),
+          content,
+          published: true
+        }),
+      });
 
-const res = await fetch(`${baseUrl}/api/posts`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    title,
-    coverImage,
-    category,
-    tags: tags.split(",").map(tag => tag.trim()),
-    content,
-    published: true
-  }),
-});
-
-
-
-    if (res.ok) {
-      setMessage("New post created!");
-      setTitle("");
-      setCoverImage("");
-      setCategory("");
-      setTags("");
-      setContent("");
-    } else {
-      setMessage("There was an error creating the post.");
+      if (res.ok) {
+        setMessage("New post created!");
+        setTitle("");
+        setCoverImage("");
+        setCategory("");
+        setTags("");
+        setContent("");
+      } else {
+        const errorData = await res.json();
+        setMessage(`Error: ${errorData.error || 'Failed to create post'}`);
+      }
+    } catch (error) {
+      console.error('Error creating post:', error);
+      setMessage("Network error occurred");
     }
   }
 
