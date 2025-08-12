@@ -1,51 +1,44 @@
 import Link from "next/link";
-import dbConnect from '@/lib/dbConnect';
-import BlogPostModel from '@/models/BlogPost';
-
-export const metadata = {
-  title: "My Blog - Recent Posts",
-  description: "A modern SEO-optimized blog with the latest posts",
-};
+import Head from "next/head";
 
 export default async function Home() {
-  // Direct database query instead of API call
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL
+      ? `${process.env.NEXT_PUBLIC_BASE_URL}`
+      : "http://localhost:3000";
+console.log(baseUrl);
+  const res = await fetch(`${baseUrl}/api/posts`, { cache: "no-store" });
+console.log(res);
+  if (!res.ok) {
+    return <div>Failed to load posts.</div>;
+  }
+
   let posts = [];
-  
   try {
-    await dbConnect();
-    posts = await BlogPostModel.find({ published: true })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .lean(); // .lean() for better performance
-    
-    // Convert MongoDB objects to plain objects for Next.js
-    posts = posts.map(post => ({
-      ...post,
-      _id: post._id.toString(),
-      createdAt: post.createdAt.toISOString()
-    }));
-    
-  } catch (error) {
-    console.error('Error fetching posts:', error);
+    const data = await res.json();
+    posts = Array.isArray(data) ? data : data.posts ?? [];
+    console.log("Fetched posts:", posts);
+  } catch (e) {
+    console.error("JSON parse error:", e);
   }
 
   return (
-    <div className="container">
-      <h1>Recent Post</h1>
-      {posts.length > 0 ? (
+    <>
+      <Head>
+        <title>My Blog</title>
+        <meta name="description" content="A modern SEO-optimized blog" />
+        <link rel="canonical" href={`${baseUrl}/`} />
+      </Head>
+      <div className="container">
+        <h1>Recent Posts</h1>
         <ul>
           {posts.map((post) => (
             <li key={post._id}>
-              <Link href={`/blog/${post._id}`}>
-                {post.title}
-              </Link>
-              <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+              <Link href={`/blog/${post._id}`}>{post.title}</Link>
             </li>
           ))}
         </ul>
-      ) : (
-        <p>No posts found. Create some posts first!</p>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
