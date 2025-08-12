@@ -31,7 +31,7 @@ export default async function Home() {
 
   return (
     <div className="container">
-      <h1>Recent Posts</h1>
+      <h1>Recent Posts.</h1>
       {posts.length > 0 ? (
         <ul>
           {posts.map((post) => (
