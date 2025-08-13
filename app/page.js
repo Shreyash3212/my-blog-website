@@ -30,7 +30,7 @@ console.log(res);
         <link rel="canonical" href={`${baseUrl}/`} />
       </Head>
       <div className="container">
-        <h1>Recent Posts</h1>
+        <h1>Recent Posts:</h1>
         <ul>
           {posts.map((post) => (
             <li key={post._id}>
