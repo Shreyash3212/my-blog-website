@@ -1,31 +1,279 @@
 /* app/globals.css */
+
+/* CSS Custom Properties for consistent theming */
+:root {
+  --primary-bg: #1a1d23;
+  --primary-bg-light: #24292f;
+  --accent-color: #0ea5e9;
+  --accent-hover: #0284c7;
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --border-radius: 8px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --container-max-width: 800px;
+  --header-height: 70px;
+}
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
   background: #fafafa;
+  line-height: 1.6;
+  color: #374151;
+  font-size: 16px;
 }
+
 .container {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 20px;
 }
+
+/* Header Styles */
+.header {
+  background: linear-gradient(135deg, var(--primary-bg) 0%, var(--primary-bg-light) 100%);
+  color: var(--text-primary);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: var(--header-height);
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  position: relative;
+}
+
+/* Logo/Brand Styles */
+.header-brand {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-color) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: var(--transition);
+}
+
+.header-brand:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+/* Navigation Styles */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: var(--border-radius);
+  position: relative;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent-color);
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::before {
+  width: calc(100% - 32px);
+}
+
+.nav-link:active {
+  transform: translateY(0);
+}
+
+/* Active state for navigation */
+.nav-link.active {
+  color: var(--accent-color);
+  background: rgba(14, 165, 233, 0.1);
+}
+
+.nav-link.active::before {
+  width: calc(100% - 32px);
+}
+
+/* Mobile Menu Button (for future mobile implementation) */
+.mobile-menu-button {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.mobile-menu-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* General Typography */
 h1, h2 {
-  color: #333;
+  color: #1f2937;
+  font-weight: 600;
+  line-height: 1.4;
 }
+
+h1 {
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* List Styles */
 ul {
   list-style: none;
   padding: 0;
 }
+
+/* Article Image Styles */
 article img {
   max-width: 100%;
-  border-radius: 8px;
+  height: auto;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 60px;
+  }
+  
+  .container {
+    padding: 0 16px;
+  }
+  
+  .header .container {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  
+  .header-brand {
+    font-size: 1.5rem;
+  }
+  
+  .header-nav {
+    gap: 4px;
+  }
+  
+  .nav-link {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 600px) {
   .container {
-    padding: 10px;
+    padding: 0 12px;
   }
-  article img {
-    height: auto;
+  
+  .header-nav {
+    flex-direction: column;
+    gap: 2px;
   }
+  
+  .nav-link {
+    padding: 6px 12px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Alternative: Hide navigation on very small screens and show mobile menu */
+  /* 
+  .header-nav {
+    display: none;
+  }
+  
+  .mobile-menu-button {
+    display: block;
+  }
+  */
+}
+
+/* Focus states for accessibility */
+.nav-link:focus,
+.mobile-menu-button:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Loading animation for dynamic content */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
 }

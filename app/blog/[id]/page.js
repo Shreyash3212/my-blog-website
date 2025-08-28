@@ -1,43 +1,193 @@
-import Head from 'next/head';
+import { Metadata } from 'next';
+import '../../styles/singleBlogPage.css';
 
-export default async function BlogPost({ params }) {
+// Generate metadata for SEO
+export async function generateMetadata({ params }) {
   const { id } = await params;
   
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
+      ? `${process.env.NEXT_PUBLIC_BASE_URL}`
+      : 'http://localhost:3000';
+    
+    const res = await fetch(`${baseUrl}/api/posts/${id}`, {
+      cache: 'no-store'
+    });
+    
+    if (!res.ok) {
+      return {
+        title: 'Post Not Found',
+        description: 'The requested blog post could not be found.'
+      };
+    }
+    
+    const post = await res.json();
+    const description = post.content.replace(/<[^>]*>/g, '').substring(0, 160);
+    
+    return {
+      title: post.title,
+      description: description,
+      keywords: post.tags?.join(', ') || '',
+      openGraph: {
+        title: post.title,
+        description: description,
+        type: 'article',
+        publishedTime: post.createdAt,
+        authors: [post.author || 'Anonymous'],
+        section: post.category,
+        tags: post.tags || [],
+        images: post.coverImage ? [
+          {
+            url: post.coverImage,
+            alt: post.title,
+          }
+        ] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: post.title,
+        description: description,
+        images: post.coverImage ? [post.coverImage] : [],
+      },
+      alternates: {
+        canonical: `${baseUrl}/blog/${id}`,
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'Blog Post',
+      description: 'Read our latest blog post.'
+    };
+  }
+}
+
+export default async function BlogPost({ params }) {
+  const { id } = await params;
+     
+  try {
     // Use relative URL for server-side requests
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL 
-      ? `${process.env.NEXT_PUBLIC_BASE_URL}` 
+      ? `${process.env.NEXT_PUBLIC_BASE_URL}`
       : 'http://localhost:3000';
     console.log(baseUrl);
+    
     const res = await fetch(`${baseUrl}/api/posts/${id}`, {
       cache: 'no-store' // Ensure fresh data
     });
     console.log(res);
+    
     if (!res.ok) {
       throw new Error('Failed to fetch post');
     }
-    
+         
     const post = await res.json();
     
+    // Generate JSON-LD structured data for SEO
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.content.replace(/<[^>]*>/g, '').substring(0, 160),
+      image: post.coverImage || '',
+      datePublished: post.createdAt,
+      dateModified: post.updatedAt || post.createdAt,
+      author: {
+        '@type': 'Person',
+        name: post.author || 'Anonymous',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Your Blog Name', // Replace with your actual blog/site name
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${baseUrl}/blog/${id}`,
+      },
+      articleSection: post.category,
+      keywords: post.tags?.join(', ') || '',
+    };
+         
     return (
       <>
-        <Head>
-          <title>{post.title}</title>
-          <meta name="description" content={post.content.substring(0,150)} />
-          <meta property="og:title" content={post.title} />
-          <meta property="og:description" content={post.content.substring(0,150)} />
-        </Head>
-        <article>
-          <h1>{post.title}</h1>
-          {post.coverImage && <img src={post.coverImage} alt={post.title} />}
-          <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
-          <p>Category: {post.category} | Tags: {post.tags?.join(', ') || 'None'}</p>
-          <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-        </article>
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        
+        <div className='blog-page-outer-container'>
+          <aside className='blog-l' aria-label="Sidebar navigation">a</aside>
+          
+          <main className='blog-m'>
+            <article itemScope itemType="https://schema.org/BlogPosting">
+              <header>
+                <h1 itemProp="headline">{post.title}</h1>
+                {post.coverImage && (
+                  <figure>
+                    <img 
+                      src={post.coverImage} 
+                      alt={post.title}
+                      itemProp="image"
+                      loading="lazy"
+                      width="800"
+                      height="400"
+                    />
+                  </figure>
+                )}
+              </header>
+              
+              <div 
+                itemProp="articleBody"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+              
+              <footer>
+                <div itemProp="about" itemScope itemType="https://schema.org/Thing">
+                  <span>Category: </span>
+                  <span itemProp="name">{post.category}</span>
+                </div>
+                
+                {post.tags && post.tags.length > 0 && (
+                  <div>
+                    <span>Tags: </span>
+                    {post.tags.map((tag, index) => (
+                      <span key={tag} itemProp="keywords">
+                        {tag}{index < post.tags.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                
+                <time 
+                  itemProp="datePublished" 
+                  dateTime={post.createdAt}
+                >
+                  {new Date(post.createdAt).toLocaleDateString()}
+                </time>
+                
+                {/* Hidden author for structured data */}
+                <meta itemProp="author" content={post.author || 'Anonymous'} />
+                <meta itemProp="publisher" content="Your Blog Name" />
+              </footer>
+            </article>
+          </main>
+          
+          <aside className='blog-r' aria-label="Additional content">c</aside>
+        </div>
       </>
     );
   } catch (error) {
     console.error('Error fetching post:', error);
-    return <div>Error loading post</div>;
+    return (
+      <div className='blog-page-outer-container'>
+        <aside className='blog-l' aria-label="Sidebar navigation">a</aside>
+        <main className='blog-m'>
+          <h1>Error Loading Post</h1>
+          <p>Sorry, we couldn't load the requested blog post. Please try again later.</p>
+        </main>
+        <aside className='blog-r' aria-label="Additional content">c</aside>
+      </div>
+    );
   }
 }

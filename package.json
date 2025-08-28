@@ -9,9 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tiptap/extension-color": "^3.3.0",
+    "@tiptap/extension-font-family": "^3.3.0",
+    "@tiptap/extension-highlight": "^3.3.0",
+    "@tiptap/extension-image": "^3.3.0",
+    "@tiptap/extension-text-align": "^3.3.0",
+    "@tiptap/extension-text-style": "^3.3.0",
+    "@tiptap/extension-underline": "^3.3.0",
+    "@tiptap/pm": "^3.3.0",
+    "@tiptap/react": "^3.3.0",
+    "@tiptap/starter-kit": "^3.3.0",
     "bson": "^6.10.4",
     "dotenv": "^17.2.1",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.539.0",
     "mongoose": "^8.17.0",
     "next": "15.4.5",
     "react": "^18.3.1",
@@ -20,8 +31,10 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
-    "tailwindcss": "^4"
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.12"
   }
 }
