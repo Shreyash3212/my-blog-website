@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Head from "next/head";
+import Image from 'next/image';
 import "./styles/home.css"
 import NavigationLink from "./components/NavigationLink";
 export default async function Home() {
@@ -35,11 +36,18 @@ export default async function Home() {
             <li key={post._id} className="post-card">
               <NavigationLink href={`/blog/${post._id}`} className="post-link">
                 {post.coverImage && (
-                  <img 
-                    src={post.coverImage} 
-                    alt={post.title} 
-                    className="post-image"
-                  />
+                  // <img 
+                  //   src={post.coverImage} 
+                  //   alt={post.title} 
+                  //   className="post-image"
+                  // />
+                  <Image 
+  src={post.coverImage} 
+  alt={post.title}  
+  className="post-image"
+    width={400}
+  height={200}
+/>
                 )}
                 <div className="post-content">
                   <div className="post-categories">

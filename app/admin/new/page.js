@@ -145,14 +145,15 @@ const Toolbar = ({ editor }) => {
 
       {/* Other */}
       <div className="toolbar-group">
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive('blockquote') ? 'active' : ''}
-          type="button"
-          title="Blockquote"
-        >
-          " Quote
-        </button>
+<button
+  onClick={() => editor.chain().focus().toggleBlockquote().run()}
+  className={editor.isActive('blockquote') ? 'active' : ''}
+  type="button"
+  title="Blockquote"
+>
+  &quot; Quote
+</button>
+
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive('codeBlock') ? 'active' : ''}

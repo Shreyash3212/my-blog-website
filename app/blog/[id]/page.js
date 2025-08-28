@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import '../../styles/singleBlogPage.css';
-
+import Image from 'next/image';
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -125,14 +125,21 @@ export default async function BlogPost({ params }) {
                 <h1 itemProp="headline">{post.title}</h1>
                 {post.coverImage && (
                   <figure>
-                    <img 
+                    {/* <img 
                       src={post.coverImage} 
                       alt={post.title}
                       itemProp="image"
                       loading="lazy"
                       width="800"
                       height="400"
-                    />
+                    /> */}
+                    <Image 
+  src={post.coverImage} 
+  alt="Cover preview" 
+  width={400}
+  height={200}
+  style={{objectFit: 'cover'}}
+/>
                   </figure>
                 )}
               </header>
@@ -184,7 +191,7 @@ export default async function BlogPost({ params }) {
         <aside className='blog-l' aria-label="Sidebar navigation">a</aside>
         <main className='blog-m'>
           <h1>Error Loading Post</h1>
-          <p>Sorry, we couldn't load the requested blog post. Please try again later.</p>
+          <p>Sorry, we couldn&apos;t load the requested blog post. Please try again later.</p>
         </main>
         <aside className='blog-r' aria-label="Additional content">c</aside>
       </div>

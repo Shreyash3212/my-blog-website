@@ -9,7 +9,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Underline } from '@tiptap/extension-underline';
-import { Image } from '@tiptap/extension-image';
+import { Image as TipTapImage } from '@tiptap/extension-image';
 import '../../../styles/editBlog.css';
 
 // Rich Text Editor Toolbar Component
@@ -153,7 +153,7 @@ const Toolbar = ({ editor }) => {
           type="button"
           title="Blockquote"
         >
-          " Quote
+          &quot; Quote
         </button>
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
@@ -228,22 +228,21 @@ export default function EditBlog({ params }) {
   const [postLoaded, setPostLoaded] = useState(false);
   const loading = useRequireAuth();
 
-const editor = useEditor({
-  extensions: [
-    StarterKit,
-    TextAlign.configure({
-      types: ['heading', 'paragraph'],
-    }),
-    TextStyle,
-    Color,
-    Highlight,
-    Underline,
-    Image,
-  ],
-  content: '<p>Loading...</p>',
-  immediatelyRender: false, // Add this line
-});
-
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      TextStyle,
+      Color,
+      Highlight,
+      Underline,
+      TipTapImage,
+    ],
+    content: '<p>Loading...</p>',
+    immediatelyRender: false,
+  });
 
   // Fetch post data
   useEffect(() => {
@@ -388,7 +387,16 @@ const editor = useEditor({
             />
             {coverImage && (
               <div className="cover-preview">
-                <img src={coverImage} alt="Cover preview" />
+                <img 
+                  src={coverImage} 
+                  alt="Cover preview"
+                  style={{
+                    width: '100%',
+                    maxWidth: '400px',
+                    height: 'auto',
+                    objectFit: 'cover'
+                  }}
+                />
               </div>
             )}
           </div>
