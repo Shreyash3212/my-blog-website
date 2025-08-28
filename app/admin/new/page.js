@@ -1,3 +1,5 @@
+// AdminNewPost Component with Link extension and Link button in Toolbar
+
 'use client';
 import { useState } from "react";
 import { useRequireAuth } from "@/app/components/userRequireAuth";
@@ -9,18 +11,28 @@ import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Underline } from '@tiptap/extension-underline';
 import { Image } from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import '../../styles/createBlog.css';
+
 // Rich Text Editor Toolbar Component
 const Toolbar = ({ editor }) => {
   if (!editor) return null;
-
   const addImage = () => {
     const url = window.prompt('Enter image URL:');
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
   };
-
+  const addLink = () => {
+    const url = window.prompt('Enter the URL');
+    if (url !== null) {
+      if (url === '') {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      } else {
+        editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+      }
+    }
+  };
   return (
     <div className="toolbar">
       {/* Text Formatting */}
@@ -58,7 +70,6 @@ const Toolbar = ({ editor }) => {
           <s>S</s>
         </button>
       </div>
-
       {/* Headings */}
       <div className="toolbar-group">
         <button
@@ -86,7 +97,6 @@ const Toolbar = ({ editor }) => {
           H3
         </button>
       </div>
-
       {/* Alignment */}
       <div className="toolbar-group">
         <button
@@ -122,7 +132,6 @@ const Toolbar = ({ editor }) => {
           ⬌
         </button>
       </div>
-
       {/* Lists */}
       <div className="toolbar-group">
         <button
@@ -142,18 +151,16 @@ const Toolbar = ({ editor }) => {
           1. List
         </button>
       </div>
-
       {/* Other */}
       <div className="toolbar-group">
-<button
-  onClick={() => editor.chain().focus().toggleBlockquote().run()}
-  className={editor.isActive('blockquote') ? 'active' : ''}
-  type="button"
-  title="Blockquote"
->
-  &quot; Quote
-</button>
-
+        <button
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={editor.isActive('blockquote') ? 'active' : ''}
+          type="button"
+          title="Blockquote"
+        >
+          &quot; Quote
+        </button>
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={editor.isActive('codeBlock') ? 'active' : ''}
@@ -169,8 +176,15 @@ const Toolbar = ({ editor }) => {
         >
           🖼️ Image
         </button>
+        <button
+          onClick={addLink}
+          className={editor.isActive('link') ? 'active' : ''}
+          type="button"
+          title="Insert Link"
+        >
+          🔗 Link
+        </button>
       </div>
-
       {/* Text Color */}
       <div className="toolbar-group">
         <input
@@ -189,7 +203,6 @@ const Toolbar = ({ editor }) => {
           🖍️ Highlight
         </button>
       </div>
-
       {/* Undo/Redo */}
       <div className="toolbar-group">
         <button
@@ -220,23 +233,22 @@ export default function AdminNewPost() {
   const [tags, setTags] = useState("");
   const [message, setMessage] = useState("");
   const loading = useRequireAuth();
-
-const editor = useEditor({
-  extensions: [
-    StarterKit,
-    TextAlign.configure({
-      types: ['heading', 'paragraph'],
-    }),
-    TextStyle,
-    Color,
-    Highlight,
-    Underline,
-    Image,
-  ],
-  content: '<p>Start writing your blog content here...</p>',
-  immediatelyRender: false, // Add this line
-});
-
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      TextStyle,
+      Color,
+      Highlight,
+      Underline,
+      Image,
+      Link,
+    ],
+    content: '<p>Start writing your blog content here...</p>',
+    immediatelyRender: false, // Add this line
+  });
 
   if (loading) {
     return <div className="loading-spinner">Loading...</div>;
@@ -246,7 +258,7 @@ const editor = useEditor({
     e.preventDefault();
     try {
       const content = editor.getHTML();
-      
+
       const res = await fetch('/api/posts', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -259,7 +271,7 @@ const editor = useEditor({
           published: true
         }),
       });
-      
+
       if (res.ok) {
         setMessage("New post created successfully! 🎉");
         setTitle("");
@@ -284,7 +296,7 @@ const editor = useEditor({
         <h1>Create New Blog Post</h1>
         <p>Build your story with our advanced editor</p>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="blog-form">
         <div className="form-section">
           <h3>Post Details</h3>
@@ -299,7 +311,7 @@ const editor = useEditor({
               className="title-input"
             />
           </div>
-          
+
           <div className="input-group">
             <label>Cover Image URL</label>
             <input
@@ -315,7 +327,7 @@ const editor = useEditor({
               </div>
             )}
           </div>
-          
+
           <div className="input-row">
             <div className="input-group">
               <label>Category</label>
@@ -339,7 +351,6 @@ const editor = useEditor({
             </div>
           </div>
         </div>
-
         <div className="form-section">
           <h3>Content</h3>
           <div className="editor-container">
@@ -347,14 +358,12 @@ const editor = useEditor({
             <EditorContent editor={editor} className="editor-content" />
           </div>
         </div>
-
         <div className="form-actions">
           <button type="submit" className="publish-btn">
             🚀 Publish Post
           </button>
         </div>
       </form>
-
       {message && (
         <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
           {message}

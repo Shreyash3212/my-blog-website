@@ -1,3 +1,5 @@
+// EditBlog Component with Link extension and Link button in Toolbar
+
 'use client';
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
@@ -10,19 +12,28 @@ import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Underline } from '@tiptap/extension-underline';
 import { Image as TipTapImage } from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import '../../../styles/editBlog.css';
 
 // Rich Text Editor Toolbar Component
 const Toolbar = ({ editor }) => {
   if (!editor) return null;
-
   const addImage = () => {
     const url = window.prompt('Enter image URL:');
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
   };
-
+  const addLink = () => {
+    const url = window.prompt('Enter the URL');
+    if (url !== null) {
+      if (url === '') {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      } else {
+        editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+      }
+    }
+  };
   return (
     <div className="toolbar">
       {/* Text Formatting */}
@@ -60,7 +71,6 @@ const Toolbar = ({ editor }) => {
           <s>S</s>
         </button>
       </div>
-
       {/* Headings */}
       <div className="toolbar-group">
         <button
@@ -88,7 +98,6 @@ const Toolbar = ({ editor }) => {
           H3
         </button>
       </div>
-
       {/* Alignment */}
       <div className="toolbar-group">
         <button
@@ -124,7 +133,6 @@ const Toolbar = ({ editor }) => {
           ⬌
         </button>
       </div>
-
       {/* Lists */}
       <div className="toolbar-group">
         <button
@@ -144,7 +152,6 @@ const Toolbar = ({ editor }) => {
           1. List
         </button>
       </div>
-
       {/* Other */}
       <div className="toolbar-group">
         <button
@@ -170,8 +177,15 @@ const Toolbar = ({ editor }) => {
         >
           🖼️ Image
         </button>
+        <button
+          onClick={addLink}
+          className={editor.isActive('link') ? 'active' : ''}
+          type="button"
+          title="Insert Link"
+        >
+          🔗 Link
+        </button>
       </div>
-
       {/* Text Color */}
       <div className="toolbar-group">
         <input
@@ -190,7 +204,6 @@ const Toolbar = ({ editor }) => {
           🖍️ Highlight
         </button>
       </div>
-
       {/* Undo/Redo */}
       <div className="toolbar-group">
         <button
@@ -217,7 +230,6 @@ const Toolbar = ({ editor }) => {
 export default function EditBlog({ params }) {
   const { id } = use(params);
   const router = useRouter();
-  
   // Blog state
   const [title, setTitle] = useState('');
   const [coverImage, setCoverImage] = useState('');
@@ -227,7 +239,6 @@ export default function EditBlog({ params }) {
   const [message, setMessage] = useState('');
   const [postLoaded, setPostLoaded] = useState(false);
   const loading = useRequireAuth();
-
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -239,6 +250,7 @@ export default function EditBlog({ params }) {
       Highlight,
       Underline,
       TipTapImage,
+      Link,
     ],
     content: '<p>Loading...</p>',
     immediatelyRender: false,
@@ -256,12 +268,12 @@ export default function EditBlog({ params }) {
           setCategory(post.category || '');
           setTags((post.tags || []).join(', '));
           setPublished(post.published || false);
-          
+
           // Set editor content
           if (editor && post.content) {
             editor.commands.setContent(post.content);
           }
-          
+
           setPostLoaded(true);
         } else {
           setMessage('Error loading post');
@@ -277,10 +289,10 @@ export default function EditBlog({ params }) {
   async function handleUpdate(e) {
     e.preventDefault();
     setMessage('');
-    
+
     try {
       const content = editor.getHTML();
-      
+
       const res = await fetch(`/api/posts/${id}`, {
         method: 'PATCH',
         headers: { "Content-Type": "application/json" },
@@ -293,7 +305,7 @@ export default function EditBlog({ params }) {
           published,
         })
       });
-      
+
       if (res.ok) {
         setMessage("Post updated successfully! 🎉");
         setTimeout(() => router.push('/admin/dashboard'), 1500);
@@ -309,10 +321,10 @@ export default function EditBlog({ params }) {
   // Delete post
   async function handleDelete() {
     if (!confirm("Are you sure you want to delete this post?")) return;
-    
+
     try {
       const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
-      
+
       if (res.ok) {
         setMessage("Post deleted! 🗑️");
         setTimeout(() => router.push('/admin/dashboard'), 1500);
@@ -327,14 +339,14 @@ export default function EditBlog({ params }) {
   // Archive post
   async function handleArchive() {
     if (!confirm("Are you sure you want to archive this post?")) return;
-    
+
     try {
       const res = await fetch(`/api/posts/${id}`, {
         method: 'PATCH',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ published: false })
       });
-      
+
       if (res.ok) {
         setMessage("Post archived (set to draft). 📁");
         setTimeout(() => router.push('/admin/dashboard'), 1500);
@@ -349,18 +361,16 @@ export default function EditBlog({ params }) {
   if (loading) {
     return <div className="loading-spinner">Loading...</div>;
   }
-
   if (!postLoaded) {
     return <div className="loading-spinner">Loading post...</div>;
   }
-
   return (
     <div className="blog-editor">
       <div className="editor-header">
         <h1>Edit Blog Post</h1>
         <p>Update your story with our advanced editor</p>
       </div>
-      
+
       <form onSubmit={handleUpdate} className="blog-form">
         <div className="form-section">
           <h3>Post Details</h3>
@@ -375,7 +385,7 @@ export default function EditBlog({ params }) {
               className="title-input"
             />
           </div>
-          
+
           <div className="input-group">
             <label>Cover Image URL</label>
             <input
@@ -387,8 +397,8 @@ export default function EditBlog({ params }) {
             />
             {coverImage && (
               <div className="cover-preview">
-                <img 
-                  src={coverImage} 
+                <img
+                  src={coverImage}
                   alt="Cover preview"
                   style={{
                     width: '100%',
@@ -400,7 +410,7 @@ export default function EditBlog({ params }) {
               </div>
             )}
           </div>
-          
+
           <div className="input-row">
             <div className="input-group">
               <label>Category</label>
@@ -423,7 +433,7 @@ export default function EditBlog({ params }) {
               />
             </div>
           </div>
-          
+
           <div className="input-group">
             <label className="checkbox-label">
               <input
@@ -436,7 +446,6 @@ export default function EditBlog({ params }) {
             </label>
           </div>
         </div>
-
         <div className="form-section">
           <h3>Content</h3>
           <div className="editor-container">
@@ -444,28 +453,26 @@ export default function EditBlog({ params }) {
             <EditorContent editor={editor} className="editor-content" />
           </div>
         </div>
-
         <div className="form-actions">
           <button type="submit" className="update-btn">
             💾 Update Post
           </button>
-          <button 
-            type="button" 
-            onClick={handleArchive} 
+          <button
+            type="button"
+            onClick={handleArchive}
             className="archive-btn"
           >
             📁 Archive
           </button>
-          <button 
-            type="button" 
-            onClick={handleDelete} 
+          <button
+            type="button"
+            onClick={handleDelete}
             className="delete-btn"
           >
             🗑️ Delete
           </button>
         </div>
       </form>
-
       {message && (
         <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
           {message}
