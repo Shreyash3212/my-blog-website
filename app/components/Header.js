@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NavigationLink from './NavigationLink';
 import { useState } from 'react';
+import "../styles/header.css"
 
 export default function Header() {
   const pathname = usePathname();
@@ -14,7 +15,7 @@ export default function Header() {
   };
   
   return (
-    <header className="header">
+    <header className="header header-transparent">
       <div className="container">
         <h1 className="header-brand">My Blog</h1>
 
