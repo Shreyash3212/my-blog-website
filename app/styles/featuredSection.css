@@ -1,0 +1,236 @@
+/* featuredSection.css */
+
+/* Featured Section Styles */
+.featured-section {
+  width: 65%;
+  margin: 4rem 0;
+}
+
+.featured-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.featured-title {
+  margin-bottom: 0.5rem;
+  font-size: var(--font-6xl);
+  font-weight: 700;
+  text-align: start;
+  color: var(--text-light);
+}
+
+.featured-subtitle {
+  font-size: var(--font-lg);
+  text-align: start;
+  margin: 0 auto;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.featured-card {
+  background: var(--card-bg);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.featured-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hero);
+}
+
+.featured-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.featured-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.featured-card:hover .featured-image {
+  transform: scale(1.05);
+}
+
+.featured-overlay {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.featured-content {
+  padding: 1.5rem;
+}
+
+.featured-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-secondary) 100%);
+  color: var(--text-primary);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1rem;
+}
+
+.featured-card-title {
+  font-size: var(--font-2xl);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+  
+  /* 2-line truncation with ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.featured-description {
+  color: var(--text-body-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: var(--font-base);
+}
+
+.featured-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.featured-link {
+  font-weight: 600;
+  color: var(--accent-color);
+  transition: all 0.3s ease;
+}
+
+.featured-card:hover .featured-link {
+  color: var(--accent-hover);
+}
+
+.featured-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-secondary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.featured-card:hover .featured-arrow {
+  transform: translateX(4px);
+}
+/* Show More Button Styles */
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.show-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-secondary) 100%);
+  color: var(--text-primary);
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 25px;
+  font-size: var(--font-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.show-more-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.05);
+}
+
+.show-more-btn:active {
+  transform: translateY(0);
+}
+
+.show-more-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.show-more-btn:hover svg {
+  transform: translateY(2px);
+}
+
+/* Responsive adjustments for show more button */
+@media (max-width: 768px) {
+  .show-more-container {
+    margin-top: 2rem;
+    padding: 0 1rem;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .featured-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+  
+  .featured-title {
+    font-size: var(--font-6xl);
+  }
+  
+  .featured-subtitle {
+    font-size: var(--font-md);
+  }
+  
+  .featured-content {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-section {
+    margin: 3rem 0;
+  }
+  
+  .featured-header {
+    margin-bottom: 2rem;
+  }
+  
+  .featured-title {
+    font-size: var(--font-5xl);
+  }
+  
+  .featured-card-title {
+    font-size: var(--font-2xl);
+  }
+}

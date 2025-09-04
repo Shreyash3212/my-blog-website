@@ -124,7 +124,7 @@ export default async function BlogPost({ params }) {
           </aside>
 
           <main className="blog-m">
-            <article itemScope itemType="https://schema.org/BlogPosting">
+            <article>
               <header>
                 <h1 itemProp="headline">{post.title}</h1>
                 {post.coverImage && (

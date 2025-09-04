@@ -14,8 +14,11 @@ export default function Header() {
     setMenuOpen(false);
   };
   
+  // Check if current page is home page
+  const isHomePage = pathname === '/';
+  
   return (
-    <header className="header header-transparent">
+    <header className={`header ${isHomePage ? 'header-transparent' : 'he'}`}>
       <div className="container">
         <h1 className="header-brand">My Blog</h1>
 

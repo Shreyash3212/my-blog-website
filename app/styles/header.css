@@ -34,7 +34,7 @@
 /* Logo/Brand Styles */
 .header-brand {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: var(--font-5xl)rem;
   font-weight: 700;
   letter-spacing: -0.025em;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-color) 100%);
@@ -110,7 +110,7 @@
   background: none;
   border: none;
   color: var(--text-primary);
-  font-size: 1.5rem;
+  font-size: var(--font-4xl)rem;
   cursor: pointer;
   padding: 8px;
   border-radius: var(--border-radius);
@@ -144,7 +144,7 @@ article img {
   }
   
   .header-brand {
-    font-size: 1.5rem;
+    font-size: var(--font-4xl)rem;
   }
   
   .header-nav {
@@ -158,9 +158,6 @@ article img {
 }
 
 @media (max-width: 600px) {
-  .container {
-    padding: 0 12px;
-  }
   
   .header-nav {
     flex-direction: column;
@@ -218,7 +215,7 @@ html {
   background: none;
   border: none;
   color: var(--text-primary);
-  font-size: 1.5rem;
+  font-size: var(--font-4xl)rem;
   cursor: pointer;
   padding: 8px;
   border-radius: var(--border-radius);
@@ -250,7 +247,6 @@ html {
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1050;
   }
 

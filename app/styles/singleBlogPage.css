@@ -15,7 +15,7 @@
 
 /* Content styling */
 .blog-m article [itemprop="articleBody"] {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-family-noto);
   line-height: 1.6;
   color: #333;
 }
@@ -38,7 +38,7 @@
 .blog-m article p {
   margin-top: 1em;
   margin-bottom: 1em;
-  font-size: 1rem;
+  font-size: var(--font-md);
 }
 
 /* Image styling and spacing */
@@ -102,17 +102,17 @@
   }
   
   .blog-m article h1 {
-    font-size: 2rem;
+    font-size: var(--font-6xl);
     margin-top: 1.5em;
     margin-bottom: 0.5em;
   }
   
   .blog-m article h2 {
-    font-size: 1.75rem;
+    font-size: var(--font-5xl)rem;
   }
   
   .blog-m article h3 {
-    font-size: 1.5rem;
+    font-size: var(--font-4xl)rem;
   }
 }
 
@@ -140,17 +140,17 @@
   }
   
   .blog-m article h1 {
-    font-size: 1.75rem;
+    font-size: var(--font-5xl)rem;
     margin-top: 1em;
     margin-bottom: 0.5em;
   }
   
   .blog-m article h2 {
-    font-size: 1.5rem;
+    font-size: var(--font-4xl)rem;
   }
   
   .blog-m article h3 {
-    font-size: 1.25rem;
+    font-size: var(--font-2xl);
   }
   
   .blog-m article img,

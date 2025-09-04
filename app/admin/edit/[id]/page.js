@@ -1,5 +1,4 @@
 // EditBlog Component with Link extension and Link button in Toolbar
-
 'use client';
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
@@ -15,15 +14,27 @@ import { Image as TipTapImage } from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import '../../../styles/editBlog.css';
 
+// Category options
+const CATEGORY_OPTIONS = [
+  { value: '', label: 'Select a category...' },
+  { value: 'Web Development', label: 'Web Development' },
+  { value: 'Mobile Development', label: 'Mobile Development' },
+  { value: 'Artificial Intelligence', label: 'Artificial Intelligence' },
+  { value: 'Cloud Computing', label: 'Cloud Computing' },
+  { value: 'Cybersecurity', label: 'Cybersecurity' }
+];
+
 // Rich Text Editor Toolbar Component
 const Toolbar = ({ editor }) => {
   if (!editor) return null;
+  
   const addImage = () => {
     const url = window.prompt('Enter image URL:');
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
   };
+  
   const addLink = () => {
     const url = window.prompt('Enter the URL');
     if (url !== null) {
@@ -34,6 +45,7 @@ const Toolbar = ({ editor }) => {
       }
     }
   };
+
   return (
     <div className="toolbar">
       {/* Text Formatting */}
@@ -230,6 +242,7 @@ const Toolbar = ({ editor }) => {
 export default function EditBlog({ params }) {
   const { id } = use(params);
   const router = useRouter();
+  
   // Blog state
   const [title, setTitle] = useState('');
   const [coverImage, setCoverImage] = useState('');
@@ -238,7 +251,9 @@ export default function EditBlog({ params }) {
   const [published, setPublished] = useState(false);
   const [message, setMessage] = useState('');
   const [postLoaded, setPostLoaded] = useState(false);
+  
   const loading = useRequireAuth();
+  
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -255,7 +270,7 @@ export default function EditBlog({ params }) {
     content: '<p>Loading...</p>',
     immediatelyRender: false,
   });
-
+  
   // Fetch post data
   useEffect(() => {
     async function fetchPost() {
@@ -268,12 +283,11 @@ export default function EditBlog({ params }) {
           setCategory(post.category || '');
           setTags((post.tags || []).join(', '));
           setPublished(post.published || false);
-
+          
           // Set editor content
           if (editor && post.content) {
             editor.commands.setContent(post.content);
           }
-
           setPostLoaded(true);
         } else {
           setMessage('Error loading post');
@@ -284,15 +298,14 @@ export default function EditBlog({ params }) {
     }
     if (id && editor) fetchPost();
   }, [id, editor]);
-
+  
   // Update post
   async function handleUpdate(e) {
     e.preventDefault();
     setMessage('');
-
+    
     try {
       const content = editor.getHTML();
-
       const res = await fetch(`/api/posts/${id}`, {
         method: 'PATCH',
         headers: { "Content-Type": "application/json" },
@@ -305,7 +318,7 @@ export default function EditBlog({ params }) {
           published,
         })
       });
-
+      
       if (res.ok) {
         setMessage("Post updated successfully! 🎉");
         setTimeout(() => router.push('/admin/dashboard'), 1500);
@@ -317,14 +330,13 @@ export default function EditBlog({ params }) {
       setMessage("Network error occurred");
     }
   }
-
+  
   // Delete post
   async function handleDelete() {
     if (!confirm("Are you sure you want to delete this post?")) return;
-
+    
     try {
       const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
-
       if (res.ok) {
         setMessage("Post deleted! 🗑️");
         setTimeout(() => router.push('/admin/dashboard'), 1500);
@@ -335,18 +347,18 @@ export default function EditBlog({ params }) {
       setMessage("Network error occurred");
     }
   }
-
+  
   // Archive post
   async function handleArchive() {
     if (!confirm("Are you sure you want to archive this post?")) return;
-
+    
     try {
       const res = await fetch(`/api/posts/${id}`, {
         method: 'PATCH',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ published: false })
       });
-
+      
       if (res.ok) {
         setMessage("Post archived (set to draft). 📁");
         setTimeout(() => router.push('/admin/dashboard'), 1500);
@@ -357,23 +369,26 @@ export default function EditBlog({ params }) {
       setMessage("Network error occurred");
     }
   }
-
+  
   if (loading) {
     return <div className="loading-spinner">Loading...</div>;
   }
+  
   if (!postLoaded) {
     return <div className="loading-spinner">Loading post...</div>;
   }
+  
   return (
     <div className="blog-editor">
       <div className="editor-header">
         <h1>Edit Blog Post</h1>
         <p>Update your story with our advanced editor</p>
       </div>
-
+      
       <form onSubmit={handleUpdate} className="blog-form">
         <div className="form-section">
           <h3>Post Details</h3>
+          
           <div className="input-group">
             <label>Title</label>
             <input
@@ -385,7 +400,7 @@ export default function EditBlog({ params }) {
               className="title-input"
             />
           </div>
-
+          
           <div className="input-group">
             <label>Cover Image URL</label>
             <input
@@ -410,18 +425,28 @@ export default function EditBlog({ params }) {
               </div>
             )}
           </div>
-
+          
           <div className="input-row">
             <div className="input-group">
               <label>Category</label>
-              <input
-                type="text"
-                placeholder="Technology, Lifestyle, etc."
+              <select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
-                className="category-input"
-              />
+                className="category-select"
+                required
+              >
+                {CATEGORY_OPTIONS.map((option) => (
+                  <option 
+                    key={option.value} 
+                    value={option.value}
+                    disabled={option.value === ''}
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
+            
             <div className="input-group">
               <label>Tags</label>
               <input
@@ -433,7 +458,7 @@ export default function EditBlog({ params }) {
               />
             </div>
           </div>
-
+          
           <div className="input-group">
             <label className="checkbox-label">
               <input
@@ -446,6 +471,7 @@ export default function EditBlog({ params }) {
             </label>
           </div>
         </div>
+        
         <div className="form-section">
           <h3>Content</h3>
           <div className="editor-container">
@@ -453,6 +479,7 @@ export default function EditBlog({ params }) {
             <EditorContent editor={editor} className="editor-content" />
           </div>
         </div>
+        
         <div className="form-actions">
           <button type="submit" className="update-btn">
             💾 Update Post
@@ -473,6 +500,7 @@ export default function EditBlog({ params }) {
           </button>
         </div>
       </form>
+      
       {message && (
         <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
           {message}

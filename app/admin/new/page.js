@@ -1,5 +1,4 @@
 // AdminNewPost Component with Link extension and Link button in Toolbar
-
 'use client';
 import { useState } from "react";
 import { useRequireAuth } from "@/app/components/userRequireAuth";
@@ -14,15 +13,27 @@ import { Image } from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import '../../styles/createBlog.css';
 
+// Category options
+const CATEGORY_OPTIONS = [
+  { value: '', label: 'Select a category...' },
+  { value: 'Web Development', label: 'Web Development' },
+  { value: 'Mobile Development', label: 'Mobile Development' },
+  { value: 'Artificial Intelligence', label: 'Artificial Intelligence' },
+  { value: 'Cloud Computing', label: 'Cloud Computing' },
+  { value: 'Cybersecurity', label: 'Cybersecurity' }
+];
+
 // Rich Text Editor Toolbar Component
 const Toolbar = ({ editor }) => {
   if (!editor) return null;
+  
   const addImage = () => {
     const url = window.prompt('Enter image URL:');
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
   };
+  
   const addLink = () => {
     const url = window.prompt('Enter the URL');
     if (url !== null) {
@@ -33,6 +44,7 @@ const Toolbar = ({ editor }) => {
       }
     }
   };
+
   return (
     <div className="toolbar">
       {/* Text Formatting */}
@@ -232,7 +244,9 @@ export default function AdminNewPost() {
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
   const [message, setMessage] = useState("");
+  
   const loading = useRequireAuth();
+  
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -247,18 +261,18 @@ export default function AdminNewPost() {
       Link,
     ],
     content: '<p>Start writing your blog content here...</p>',
-    immediatelyRender: false, // Add this line
+    immediatelyRender: false,
   });
-
+  
   if (loading) {
     return <div className="loading-spinner">Loading...</div>;
   }
-
+  
   async function handleSubmit(e) {
     e.preventDefault();
+    
     try {
       const content = editor.getHTML();
-
       const res = await fetch('/api/posts', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -271,7 +285,7 @@ export default function AdminNewPost() {
           published: true
         }),
       });
-
+      
       if (res.ok) {
         setMessage("New post created successfully! 🎉");
         setTitle("");
@@ -289,17 +303,18 @@ export default function AdminNewPost() {
       setMessage("Network error occurred");
     }
   }
-
+  
   return (
     <div className="blog-creator">
       <div className="creator-header">
         <h1>Create New Blog Post</h1>
         <p>Build your story with our advanced editor</p>
       </div>
-
+      
       <form onSubmit={handleSubmit} className="blog-form">
         <div className="form-section">
           <h3>Post Details</h3>
+          
           <div className="input-group">
             <label>Title</label>
             <input
@@ -311,7 +326,7 @@ export default function AdminNewPost() {
               className="title-input"
             />
           </div>
-
+          
           <div className="input-group">
             <label>Cover Image URL</label>
             <input
@@ -327,18 +342,28 @@ export default function AdminNewPost() {
               </div>
             )}
           </div>
-
+          
           <div className="input-row">
             <div className="input-group">
               <label>Category</label>
-              <input
-                type="text"
-                placeholder="Technology, Lifestyle, etc."
+              <select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
-                className="category-input"
-              />
+                className="category-select"
+                required
+              >
+                {CATEGORY_OPTIONS.map((option) => (
+                  <option 
+                    key={option.value} 
+                    value={option.value}
+                    disabled={option.value === ''}
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
+            
             <div className="input-group">
               <label>Tags</label>
               <input
@@ -351,6 +376,7 @@ export default function AdminNewPost() {
             </div>
           </div>
         </div>
+        
         <div className="form-section">
           <h3>Content</h3>
           <div className="editor-container">
@@ -358,12 +384,14 @@ export default function AdminNewPost() {
             <EditorContent editor={editor} className="editor-content" />
           </div>
         </div>
+        
         <div className="form-actions">
           <button type="submit" className="publish-btn">
             🚀 Publish Post
           </button>
         </div>
       </form>
+      
       {message && (
         <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
           {message}
